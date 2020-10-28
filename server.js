@@ -20,8 +20,31 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/timestamp/", function (req, res) {
+  res.json({unix: Date.now(), utc: Date()});
+});
+
+// Date String
+app.get("/api/timestamp/:date_string?", function (req, res) {
+  // Define dateString
+  let dateString = req.params.date_string;
+
+  if(/\d{5,}/.test(dateString)) {
+    let dateInt = parseInt(dateString);
+    // date regards numbers as unix timestamps, strings processed differently
+    res.json({unix: dateString, utc: new Date(dateInt).toUTCString()});
+  }
+
+  // Define dateObject
+  let dateObject = new Date(dateString);
+  
+  if(dateObject.toString() === "Invalid Date") {
+    res.json({error: "Invalid Date"});
+  } else {
+    res.json({unix: dateObject.valueOf(), utc: dateObject.toUTCString()});
+  }
+
+
 });
 
 
